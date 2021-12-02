@@ -22,8 +22,7 @@ function recursiveNumberOfIncreases(i: Iterable<number>): number {
     if (arr.length < 2) {
       return count;
     } else {
-      if (arr[0] < arr[1]) count++;
-      return iterate(arr.slice(1), count);
+      return iterate(arr.slice(1), arr[0] < arr[1] ? ++count : count);
     }
   };
 
