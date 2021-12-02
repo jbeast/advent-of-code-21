@@ -17,8 +17,32 @@ function numberOfIncreases(i: Iterable<number>): number {
   return count;
 }
 
+function recursiveNumberOfIncreases(i: Iterable<number>): number {
+  const iterate = (arr: Array<number>, count: number): number => {
+    if (arr.length < 2) {
+      return count;
+    } else {
+      if (arr[0] < arr[1]) count++;
+      return iterate(arr.slice(1), count);
+    }
+  };
+
+  return iterate(Array.from(i), 0);
+}
+
 console.log(
-  numberOfIncreases([199, 200, 208, 210, 200, 207, 240, 269, 260, 263]),
+  recursiveNumberOfIncreases([
+    199,
+    200,
+    208,
+    210,
+    200,
+    207,
+    240,
+    269,
+    260,
+    263,
+  ]),
   "should be 7"
 );
 
@@ -26,4 +50,4 @@ const input = readFileSync("./src/day1.input.txt", "utf8")
   .split("\n")
   .map((n) => parseInt(n));
 
-console.log(numberOfIncreases(input));
+console.log(recursiveNumberOfIncreases(input));
