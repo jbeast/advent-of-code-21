@@ -57,3 +57,40 @@ const gammaRate = parseInt(gammaRateStr, 2);
 const epsilonRate = parseInt(epsilonRateStr, 2);
 
 console.log(gammaRate * epsilonRate, " is the answer");
+
+function filterValues(
+  input: Array<string>,
+  mostCommon: boolean = true
+): string {
+  const iterate = (_input: Array<string>, bitIndex: number): string => {
+    if (_input.length === 1) {
+      return _input[0];
+    }
+
+    const i = _input
+      .map((s) => s[bitIndex])
+      .reduce((memo, value) => {
+        return value === "0" ? --memo : ++memo;
+      }, 0);
+
+    const filter = (n: string) => n[bitIndex] === (i < 0 ? "0" : "1");
+
+    return iterate(
+      _input.filter((n) => (mostCommon ? filter(n) : !filter(n))),
+      ++bitIndex
+    );
+  };
+
+  return iterate(input, 0);
+}
+
+console.log(filterValues(testInput, true), "should be 10111");
+console.log(filterValues(testInput, false), "should be 01010");
+
+const oxygenRatingStr = filterValues(input, true);
+const oxygenRating = parseInt(oxygenRatingStr, 2);
+
+const co2ScrubberRatingStr = filterValues(input, false);
+const co2ScrubberRating = parseInt(co2ScrubberRatingStr, 2);
+
+console.log("Answer: ", oxygenRating * co2ScrubberRating);
