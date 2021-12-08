@@ -28,13 +28,20 @@ type Line = {
 type Grid = Map<string, number>;
 
 function between(x: number, y: number): number[] {
-  const start = x < y ? x : y;
-  const end = start === x ? y : x;
-
   let _range = [];
-  for (let i = start; i <= end; i++) {
-    _range.push(i);
+
+  if (x === y) return [x];
+
+  if (x < y) {
+    for (; x <= y; x++) {
+      _range.push(x);
+    }
+  } else {
+    for (; x >= y; x--) {
+      _range.push(x);
+    }
   }
+
   return _range;
 }
 
@@ -48,7 +55,12 @@ function path(line: Line): Array<Point> {
       (x) => new Point(x, line.from.y)
     );
   } else {
-    return [];
+    const xs = between(line.from.x, line.to.x);
+    const ys = between(line.from.y, line.to.y);
+
+    return xs.map((x, i) => {
+      return new Point(x, ys[i]);
+    });
   }
 }
 
