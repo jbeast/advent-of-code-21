@@ -1,56 +1,4 @@
-import { map, filter, reduce, pipe, construct, forEach, tap } from "ramda";
-
-class Fish {
-  private isNew: boolean = true;
-  internalTimer: number;
-
-  constructor(internalTimer: number) {
-    this.internalTimer = internalTimer;
-  }
-
-  age() {
-    if (this.internalTimer === 0) {
-      this.isNew = false;
-      this.internalTimer = 6;
-    } else {
-      this.internalTimer--;
-    }
-  }
-
-  shouldCreate() {
-    return this.internalTimer === 6 && !this.isNew;
-  }
-}
-
-function maybeAddNewFish(fish: ReadonlyArray<Fish>): Fish[] {
-  return fish.reduce(
-    (memo, value) => {
-      if (value.shouldCreate()) {
-        memo.push(new Fish(8));
-      }
-      return memo;
-    },
-    [...fish]
-  );
-}
-
-function simulate(
-  fish: ReadonlyArray<Fish>,
-  days: number
-): ReadonlyArray<Fish> {
-  if (days === 0) {
-    return fish;
-  } else {
-    fish.forEach((f) => f.age());
-    const newFish = maybeAddNewFish(fish);
-    console.log(newFish);
-    return simulate(newFish, days - 1);
-  }
-}
-
-const constructFish = map(construct(Fish));
-
-console.log(simulate(constructFish([3, 4, 3, 1, 2]), 80).length);
+import * as R from "ramda";
 
 const puzzleInput = [
   1,
@@ -355,4 +303,37 @@ const puzzleInput = [
   2,
 ];
 
-console.log("Answer: ", simulate(constructFish(puzzleInput), 80).length);
+type Count = { [key: string]: number };
+
+const emptyCounts = R.reduce<number, Count>((memo, value) => {
+  memo[value] = 0;
+  return memo;
+}, {})(R.range(0, 9));
+
+const createInitial = R.mergeRight(emptyCounts);
+
+const sampleInput = createInitial(R.countBy(R.identity, [3, 4, 3, 1, 2]));
+const input = createInitial(R.countBy(R.identity, puzzleInput));
+
+function simulate(count: Count, days: number): Count {
+  if (days === 0) {
+    return count;
+  } else {
+    const newCount = R.reduce<number, Count>((memo, value) => {
+      memo[value] = count[value + 1];
+      return memo;
+    }, {})(R.range(0, 8));
+
+    newCount[8] = count[0];
+    newCount[6] += count[0];
+
+    return simulate(newCount, days - 1);
+  }
+}
+
+const answer = R.pipe(simulate, R.values, R.sum);
+
+console.log("Answer should be 26: ", answer(sampleInput, 18));
+
+console.log("Answer: ", answer(input, 80));
+console.log("Answer: ", answer(input, 256));
