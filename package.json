@@ -11,8 +11,12 @@
   "license": "ISC",
   "dependencies": {
     "@types/node": "^16.11.11",
+    "ramda": "^0.27.1",
     "ts-node": "^10.4.0",
     "type": "^2.5.0",
     "typescript": "^4.5.2"
+  },
+  "devDependencies": {
+    "@types/ramda": "^0.27.60"
   }
 }
