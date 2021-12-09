@@ -1,4 +1,4 @@
-import { curry, map, max, range, sum, unary } from "ramda";
+import { curry, map, max, min, range, sum, unary } from "ramda";
 import { readFileSync } from "fs";
 
 const difference = curry(function (a: number, b: number): number {
@@ -17,15 +17,12 @@ function findCheapestOutcome(list: Array<number>): number {
   const minHorizontalPosition = Math.min(...list);
   const maxHorizontalPosition = Math.max(...list);
 
-  const startingPoint = [minHorizontalPosition, Infinity];
-
   return range(minHorizontalPosition, maxHorizontalPosition).reduce(
     (memo, value) => {
-      const total = sum(map<number, number>(difference(value))(list));
-      return total < memo[1] ? [value, total] : memo;
+      return min(sum(map<number, number>(difference(value))(list)), memo);
     },
-    startingPoint
-  )[1];
+    0
+  );
 }
 
 const sampleInput = [16, 1, 2, 0, 4, 2, 7, 1, 2, 14];
